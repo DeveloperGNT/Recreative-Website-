@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { NAV } from '../data/site'
 import { PHOTOGRAPHY_SERVICES, VIDEOGRAPHY_SERVICES, serviceHref } from '../data/services'
-import { LOCATIONS, locationHref } from '../data/locations'
+import { LOCATIONS } from '../data/locations'
 import Logo from './Logo'
 
 const MENUS = {

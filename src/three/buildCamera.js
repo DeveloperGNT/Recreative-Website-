@@ -97,8 +97,9 @@ export function buildCamera({ detail = 'high' } = {}) {
 
   const addPart = (object, { rest, exploded, delay = 0, spin = null } = {}) => {
     if (!rest) rest = object.position.clone()
-    else rest = new THREE.Vector3(...rest)
-    exploded = exploded || rest.clone()
+    else if (Array.isArray(rest)) rest = new THREE.Vector3(...rest)
+    if (!exploded) exploded = rest.clone()
+    else if (Array.isArray(exploded)) exploded = new THREE.Vector3(...exploded)
     object.userData.rest = rest
     object.userData.exploded = exploded
     object.userData.delay = delay
@@ -224,9 +225,17 @@ export function buildCamera({ detail = 'high' } = {}) {
   addPart(accentRing, { delay: 0.2, exploded: [LENS_X, 0.05, LZ + 3.0] })
 
   const frontRing = new THREE.Group()
-  const frnt = mesh(new THREE.CylinderGeometry(1.24, 1.26, 0.7, 56), M.metal, LENS_X, 0.05, LZ + 1.62)
-  frnt.rotation.x = Math.PI / 2
+  const frnt = mesh(new THREE.TorusGeometry(1.17, 0.13, 18, 64), M.metal, LENS_X, 0.05, LZ + 1.92)
   frontRing.add(frnt)
+  const frontGlass = mesh(
+    new THREE.CylinderGeometry(1.04, 1.04, 0.12, 64),
+    M.glassCoated,
+    LENS_X,
+    0.05,
+    LZ + 1.91
+  )
+  frontGlass.rotation.x = Math.PI / 2
+  frontRing.add(frontGlass)
   addPart(frontRing, { delay: 0.28, exploded: [LENS_X, 0.05, LZ + 4.8] })
 
   // glass element chain (front → rear)
@@ -252,14 +261,14 @@ export function buildCamera({ detail = 'high' } = {}) {
 
   // aperture assembly
   const aperture = new THREE.Group()
-  const apPlate = mesh(new THREE.CylinderGeometry(0.95, 0.95, 0.1, 40), M.metalDark, LENS_X, 0.05, LZ + 0.55)
+  const apPlate = mesh(new THREE.CylinderGeometry(0.82, 0.82, 0.08, 40), M.screen, LENS_X, 0.05, LZ + 1.78)
   apPlate.rotation.x = Math.PI / 2
   aperture.add(apPlate)
   for (let i = 0; i < 6; i++) {
-    const b = mesh(new THREE.BoxGeometry(0.8, 0.14, 0.04), M.blade, LENS_X, 0.05, LZ + 0.52)
+    const b = mesh(new THREE.BoxGeometry(0.65, 0.11, 0.04), M.blade, LENS_X, 0.05, LZ + 1.82)
     b.rotation.z = (i / 6) * Math.PI * 2
-    b.position.x = LENS_X + Math.cos((i / 6) * Math.PI * 2) * 0.32
-    b.position.y = 0.05 + Math.sin((i / 6) * Math.PI * 2) * 0.32
+    b.position.x = LENS_X + Math.cos((i / 6) * Math.PI * 2) * 0.27
+    b.position.y = 0.05 + Math.sin((i / 6) * Math.PI * 2) * 0.27
     aperture.add(b)
   }
   addPart(aperture, { delay: 0.44, exploded: [LENS_X, 0.05, LZ + 4.0] })

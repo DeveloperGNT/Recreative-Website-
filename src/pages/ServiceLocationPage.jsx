@@ -4,7 +4,7 @@ import { Reveal } from '../lib/motion'
 import { serviceBySlug, typeOf, PHOTOGRAPHY_SERVICES, VIDEOGRAPHY_SERVICES } from '../data/services'
 import { locationBySlug, LOCATIONS, locationHref } from '../data/locations'
 import { SITE } from '../data/site'
-import { PageHero, FAQSection, Breadcrumbs } from '../components/ui'
+import { PageHero, FAQSection } from '../components/ui'
 import CTASection from '../components/CTASection'
 import NotFound from './NotFound'
 

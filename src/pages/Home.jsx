@@ -3,10 +3,9 @@ import { Link } from 'react-router-dom'
 import { useSEO, breadcrumbSchema } from '../lib/seo'
 import { Reveal, prefersReducedMotion } from '../lib/motion'
 import { SITE, REVIEWS, PROCESS, CRAFT_CHAPTERS } from '../data/site'
-import { PHOTOGRAPHY_SERVICES, VIDEOGRAPHY_SERVICES, serviceHref } from '../data/services'
+import { PHOTOGRAPHY_SERVICES, serviceHref } from '../data/services'
 import { LOCATIONS, locationHref } from '../data/locations'
-import { WORK } from '../data/portfolio'
-import { FILMS, FILM_STILLS } from '../data/videos'
+import { FILMS } from '../data/videos'
 import { FAQS } from '../data/faqs'
 import CTASection from '../components/CTASection'
 import VideoCard from '../components/VideoCard'
@@ -45,6 +44,25 @@ export default function Home() {
   )
 }
 
+function ModelBuffer({ progress, ready }) {
+  return (
+    <div className={`model-buffer ${ready ? 'is-ready' : ''}`} aria-hidden={ready}>
+      <div className="model-buffer__inner">
+        <div className="model-buffer__mark">
+          <img src="/ReCreative-Logo-og.webp" alt="" width="72" height="72" />
+        </div>
+        <p className="model-buffer__eyebrow">ReCreative studio</p>
+        <h2>Preparing the view.</h2>
+        <p className="model-buffer__status">Loading the interactive camera experience</p>
+        <div className="model-buffer__track" role="progressbar" aria-valuenow={progress} aria-valuemin="0" aria-valuemax="100">
+          <span style={{ width: `${progress}%` }} />
+        </div>
+        <div className="model-buffer__meta"><span>Initialising 3D scene</span><b>{progress}%</b></div>
+      </div>
+    </div>
+  )
+}
+
 function faqHomeSchema() {
   return {
     '@context': 'https://schema.org',
@@ -61,7 +79,9 @@ function faqHomeSchema() {
 
 function Hero() {
   const [Canvas, setCanvas] = useState(null)
-  const pose = useRef({ p: 0, spin: 0, camZ: 12.2, camY: 0.7, lookY: 0 }).current
+  const [modelProgress, setModelProgress] = useState(0)
+  const [modelReady, setModelReady] = useState(false)
+  const poseRef = useRef({ p: 0, spin: 0, camZ: 12.2, camY: 0.7, lookY: 0 })
 
   useEffect(() => {
     let live = true
@@ -73,6 +93,7 @@ function Hero() {
 
   return (
     <section className="hero">
+      <ModelBuffer progress={modelProgress} ready={modelReady} />
       <div className="hero__bg" aria-hidden="true" />
       <div className="hero__grid" aria-hidden="true" />
       <p className="hero__specs" aria-hidden="true">
@@ -104,8 +125,27 @@ function Hero() {
 
         <div className="hero__canvas">
           {Canvas && (
-            <Canvas poseRef={pose} className="hero__canvas-inner" />
+            <Canvas
+              poseRef={poseRef}
+              modelUrl="/DSLR_Camera_Model.glb"
+              onModelProgress={setModelProgress}
+              onModelReady={() => setModelReady(true)}
+              className="hero__canvas-inner"
+            />
           )}
+          <div className={`hero__loader ${modelReady ? 'is-ready' : ''}`} aria-hidden={modelReady}>
+            <div className="hero__loader-mark">
+              <img src="/ReCreative-Logo-og.webp" alt="" width="64" height="64" />
+            </div>
+            <p className="hero__loader-label">Preparing the studio</p>
+            <div className="hero__loader-track" role="progressbar" aria-valuenow={modelProgress} aria-valuemin="0" aria-valuemax="100">
+              <span style={{ width: `${modelProgress}%` }} />
+            </div>
+            <div className="hero__loader-meta">
+              <span>Loading camera model</span>
+              <b>{modelProgress}%</b>
+            </div>
+          </div>
           <div className="hero__hud" aria-hidden="true">
             <span>MODE <b>A</b></span>
             <span>LEN <b>35MM</b></span>
@@ -126,7 +166,13 @@ function Statement() {
   return (
     <section className="section statement">
       <div className="wrap statement__in">
-        <Reveal as="p" className="meta">What ReCreative does</Reveal>
+        <div className="statement__meta">
+          <Reveal as="p" className="meta">What ReCreative does</Reveal>
+          <Reveal variant="rv-clip rv-img" className="ph vf statement__img ph--zoom" delay={60} style={{ marginTop: '1.8rem', aspectRatio: '4/3' }}>
+            <span className="vf-b" aria-hidden="true" />
+            <img src="/images/blog-hero-studio.png" alt="Professional product photography studio with lighting, camera and perfume setup" />
+          </Reveal>
+        </div>
         <div>
           <Reveal as="h2" className="statement__big">
             Every product has a moment where it looks its best. We build that moment —
@@ -186,15 +232,15 @@ function VisualStatement() {
         <div className="vis__grid">
           <Reveal variant="rv-clip rv-img" className="ph vf vis__a ph--zoom" delay={0}>
             <span className="vf-b" aria-hidden="true" />
-            <img src="/images/work-23.webp" alt="Golden ghee pouring beside a packaged jar — food and FMCG photography by ReCreative" loading="lazy" />
+            <img src="/images/work-23.webp" alt="Golden ghee pouring beside a packaged jar — food and FMCG photography by ReCreative" />
           </Reveal>
           <Reveal variant="rv-clip rv-img" className="ph vf vis__b ph--zoom" delay={120}>
             <span className="vf-b" aria-hidden="true" />
-            <img src="/images/work-18.webp" alt="Silver statement necklace styled on deep purple — jewellery photography" loading="lazy" />
+            <img src="/images/work-18.webp" alt="Silver statement necklace styled on deep purple — jewellery photography" />
           </Reveal>
           <Reveal variant="rv-clip rv-img" className="ph vf vis__c ph--zoom" delay={240}>
             <span className="vf-b" aria-hidden="true" />
-            <img src="/images/work-21.webp" alt="Spray bottle staged on a dark tropical leaf — creative product photography" loading="lazy" />
+            <img src="/images/work-21.webp" alt="Spray bottle staged on a dark tropical leaf — creative product photography" />
           </Reveal>
           <figcaption className="ph-cap vis__cap">
             <span>Real productions</span>
@@ -211,9 +257,23 @@ function VisualStatement() {
 function Craft() {
   const sectionRef = useRef(null)
   const stickyRef = useRef(null)
-  const pose = useRef({ p: 0, spin: 0, camZ: 12.2, camY: 0.7, lookY: 0.2 }).current
+  const poseRef = useRef({ p: 0, spin: 0, camZ: 12.2, camY: 0.7, lookY: 0.2 })
   const [Canvas, setCanvas] = useState(null)
   const reduced = prefersReducedMotion()
+
+  const chaptersRef = useRef([])
+  const barsRef = useRef([])
+
+  const updateChapters = (progress) => {
+    const n = CRAFT_CHAPTERS.length
+    const idx = Math.min(n - 1, Math.floor(progress * n * 0.999))
+    chaptersRef.current.forEach((el, i) => el && el.classList.toggle('is-active', i === idx))
+    barsRef.current.forEach((el, i) => {
+      if (!el) return
+      el.classList.toggle('done', i < idx)
+      el.classList.toggle('on', i === idx)
+    })
+  }
 
   useEffect(() => {
     let live = true
@@ -241,10 +301,10 @@ function Craft() {
         },
       })
 
-      tl.to(pose, { p: 0.5, spin: 1.2, camZ: 13.8, camY: 1.0, ease: 'power2.inOut', duration: 4 })
-        .to(pose, { p: 1, spin: 2.6, camZ: 15.4, camY: 1.6, ease: 'power1.inOut', duration: 3.2 })
-        .to(pose, { p: 1, spin: 3.4, camZ: 15.8, ease: 'none', duration: 1.4 })
-        .to(pose, { p: 0, spin: 6.283, camZ: 12.2, camY: 0.7, ease: 'power2.inOut', duration: 3.4 })
+      tl.to(poseRef.current, { p: 0.5, spin: 1.2, camZ: 13.8, camY: 1.0, ease: 'power2.inOut', duration: 4 })
+        .to(poseRef.current, { p: 1, spin: 2.6, camZ: 15.4, camY: 1.6, ease: 'power1.inOut', duration: 3.2 })
+        .to(poseRef.current, { p: 1, spin: 3.4, camZ: 15.8, ease: 'none', duration: 1.4 })
+        .to(poseRef.current, { p: 0, spin: 6.283, camZ: 12.2, camY: 0.7, ease: 'power2.inOut', duration: 3.4 })
 
       return () => {}
     })
@@ -255,24 +315,9 @@ function Craft() {
     }
   }, [Canvas, reduced])
 
-  const chaptersRef = useRef([])
-  const barsRef = useRef([])
-
-  const updateChapters = (progress) => {
-    const n = CRAFT_CHAPTERS.length
-    const idx = Math.min(n - 1, Math.floor(progress * n * 0.999))
-    chaptersRef.current.forEach((el, i) => el && el.classList.toggle('is-active', i === idx))
-    barsRef.current.forEach((el, i) => {
-      if (!el) return
-      el.classList.toggle('done', i < idx)
-      el.classList.toggle('on', i === idx)
-    })
-  }
-
   return (
     <section className="craft" ref={sectionRef} aria-label="The craft behind the camera">
       {reduced ? (
-        // Static, elegant fallback: chapter list without pinning
         <div className="section wrap">
           <p className="section-label"><span className="tick" />The craft</p>
           <h2 className="h2" style={{ marginBottom: '2rem' }}>
@@ -290,10 +335,9 @@ function Craft() {
         </div>
       ) : (
         <>
-          <div className="craft__spacer" aria-hidden="true" />
           <div className="craft__sticky" ref={stickyRef}>
             <div className="craft__canvas">
-              {Canvas && <Canvas poseRef={pose} />}
+              {Canvas && <Canvas poseRef={poseRef} />}
             </div>
             <div className="craft__head">
               <p className="section-label"><span className="tick" />The craft — scroll to disassemble</p>
@@ -319,6 +363,7 @@ function Craft() {
               ))}
             </div>
           </div>
+          <div className="craft__spacer" aria-hidden="true" style={{ marginTop: '-100vh', height: '350vh' }} />
         </>
       )}
     </section>

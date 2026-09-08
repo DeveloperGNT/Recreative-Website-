@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { faqSchema } from '../lib/seo'
 
@@ -22,19 +23,29 @@ export function Breadcrumbs({ items, dark = false }) {
 }
 
 export function FAQ({ items }) {
+  const [openIndex, setOpenIndex] = useState(null)
+
   return (
     <div className="faq">
-      {items.map((f) => (
-        <details key={f.q} className="faq__item">
-          <summary className="faq__q">
+      {items.map((f, index) => {
+        const isOpen = openIndex === index
+        return (
+        <div key={f.q} className={`faq__item ${isOpen ? 'is-open' : ''}`}>
+          <button
+            type="button"
+            className="faq__q"
+            aria-expanded={isOpen}
+            onClick={() => setOpenIndex(isOpen ? null : index)}
+          >
             {f.q}
             <span className="ix" aria-hidden="true" />
-          </summary>
+          </button>
           <div className="faq__a">
             <div>{f.a}</div>
           </div>
-        </details>
-      ))}
+        </div>
+        )
+      })}
     </div>
   )
 }
@@ -63,7 +74,7 @@ export function FaqSchema({ items }) {
 }
 
 // Shared inner-page hero with breadcrumbs
-export function PageHero({ label, title, lede, crumbs, children, meta }) {
+export function PageHero({ label, title, lede, crumbs, children, meta, image }) {
   return (
     <section className="pagehero">
       <div className="wrap">
@@ -74,7 +85,13 @@ export function PageHero({ label, title, lede, crumbs, children, meta }) {
         </p>
         <div className="pagehero__row">
           <h1 className="pagehero__title">{title}</h1>
-          {lede && <p className="pagehero__lede">{lede}</p>}
+          {image ? (
+            <div className="pagehero__media">
+              <img src={image.src} alt={image.alt} />
+            </div>
+          ) : lede ? (
+            <p className="pagehero__lede">{lede}</p>
+          ) : null}
         </div>
         {children}
         {meta && <p className="meta pagehero__meta">{meta}</p>}

@@ -5,7 +5,7 @@ import { useMedia } from '../lib/motion'
 // dynamically), quality-aware, pauses when offscreen.
 // poseRef: { current: { p, spin, camZ, camY, lookY } } — updated by the page
 // (GSAP ScrollTrigger) and consumed every frame.
-export default function CameraCanvas({ poseRef, className = '', onReady }) {
+export default function CameraCanvas({ poseRef, className = '', onReady, onModelProgress, onModelReady, modelUrl = null }) {
   const canvasRef = useRef(null)
   const wrapRef = useRef(null)
   const sceneRef = useRef(null)
@@ -19,12 +19,28 @@ export default function CameraCanvas({ poseRef, className = '', onReady }) {
 
     import('./CameraScene').then(({ CameraScene }) => {
       if (cancelled || !canvasRef.current) return
-      scene = new CameraScene(canvasRef.current, { quality: lowPower ? 'low' : 'high' })
-      sceneRef.current = scene
+      try {
+        scene = new CameraScene(canvasRef.current, {
+          quality: lowPower ? 'low' : 'high',
+          modelUrl,
+          onModelProgress,
+          onModelReady,
+        })
+        sceneRef.current = scene
+      } catch (err) {
+        console.error('CameraScene initialization error:', err)
+        return
+      }
 
       const resize = () => {
         const el = wrapRef.current
-        if (el && scene) scene.resize(el.clientWidth, el.clientHeight)
+        if (el && scene) {
+          const w = el.clientWidth || el.parentElement?.clientWidth || window.innerWidth
+          const h = el.clientHeight || el.parentElement?.clientHeight || Math.round(window.innerHeight * 0.7)
+          if (w > 0 && h > 0) {
+            scene.resize(w, h)
+          }
+        }
       }
       resize()
       ro = new ResizeObserver(resize)
@@ -35,7 +51,7 @@ export default function CameraCanvas({ poseRef, className = '', onReady }) {
         ([entry]) => {
           if (scene) scene.running = entry.isIntersecting
         },
-        { rootMargin: '160px' }
+        { rootMargin: '400px' }
       )
       io.observe(wrapRef.current)
 
@@ -60,7 +76,7 @@ export default function CameraCanvas({ poseRef, className = '', onReady }) {
       sceneRef.current?.dispose()
       sceneRef.current = null
     }
-  }, [lowPower])
+  }, [lowPower, modelUrl])
 
   // Feed the pose each frame.
   useEffect(() => {
@@ -74,8 +90,17 @@ export default function CameraCanvas({ poseRef, className = '', onReady }) {
   }, [poseRef])
 
   return (
-    <div ref={wrapRef} className={className}>
-      <canvas ref={canvasRef} aria-label="Interactive 3D model of a professional camera" role="img" />
+    <div
+      ref={wrapRef}
+      className={`camera-canvas-wrap ${className}`.trim()}
+      style={{ width: '100%', height: '100%', position: 'relative' }}
+    >
+      <canvas
+        ref={canvasRef}
+        aria-label="Interactive 3D model of a professional camera"
+        role="img"
+        style={{ width: '100%', height: '100%', display: 'block' }}
+      />
     </div>
   )
 }

@@ -14,6 +14,14 @@ export function useReveal() {
       el.classList.add('is-in')
       return
     }
+
+    // Immediately reveal if already in or near viewport on mount
+    const rect = el.getBoundingClientRect()
+    if (rect.top < window.innerHeight + 150 && rect.bottom > -150) {
+      el.classList.add('is-in')
+      return
+    }
+
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
@@ -23,7 +31,7 @@ export function useReveal() {
           }
         })
       },
-      { threshold: 0.12, rootMargin: '0px 0px -6% 0px' }
+      { threshold: 0, rootMargin: '150px 0px 50px 0px' }
     )
     io.observe(el)
     return () => io.disconnect()

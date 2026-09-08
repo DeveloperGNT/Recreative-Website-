@@ -4,15 +4,18 @@
 
 import * as THREE from 'three'
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { buildCamera } from './buildCamera'
 
 const clamp01 = (v) => Math.min(1, Math.max(0, v))
 const easeInOut = (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2)
 
 export class CameraScene {
-  constructor(canvas, { quality = 'high' } = {}) {
+  constructor(canvas, { quality = 'high', modelUrl = null, onModelProgress, onModelReady } = {}) {
     this.canvas = canvas
     this.quality = quality
+    this.onModelProgress = onModelProgress
+    this.onModelReady = onModelReady
     this.disposed = false
     this.running = true
 
@@ -49,11 +52,19 @@ export class CameraScene {
     this.amb = new THREE.AmbientLight(0xffffff, 0.35)
     this.scene.add(this.amb)
 
-    // model
-    const { group, parts } = buildCamera({ detail: quality })
-    this.model = group
-    this.parts = parts
-    this.scene.add(group)
+    // The hero can use an authored asset; the craft section keeps the
+    // procedural model because its scroll interaction depends on exploded parts.
+    this.model = new THREE.Group()
+    this.parts = []
+    this.scene.add(this.model)
+    if (modelUrl) this.loadModel(modelUrl)
+    else {
+      const { group, parts } = buildCamera({ detail: quality })
+      this.model.add(group)
+      this.parts = parts
+      this.onModelProgress?.(100)
+      this.onModelReady?.()
+    }
 
     // rig
     this.camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100)
@@ -70,6 +81,43 @@ export class CameraScene {
     this.raf = null
     this.loop = this.loop.bind(this)
     this.loop()
+  }
+
+  loadModel(url) {
+    const loader = new GLTFLoader()
+    loader.load(
+      url,
+      (gltf) => {
+        if (this.disposed) return
+        const asset = gltf.scene
+        const bounds = new THREE.Box3().setFromObject(asset)
+        const size = bounds.getSize(new THREE.Vector3())
+        const center = bounds.getCenter(new THREE.Vector3())
+        const scale = 6 / Math.max(size.x, size.y, size.z)
+
+        asset.position.set(-center.x, -center.y, -center.z)
+        asset.scale.setScalar(scale)
+        asset.traverse((object) => {
+          if (object.isMesh) {
+            object.castShadow = true
+            object.receiveShadow = true
+          }
+        })
+
+        this.model.clear()
+        this.model.add(asset)
+        this.onModelProgress?.(100)
+        this.onModelReady?.()
+      },
+      (event) => {
+        if (event.total) {
+          this.onModelProgress?.(Math.min(99, Math.round((event.loaded / event.total) * 100)))
+        }
+      },
+      (error) => {
+        if (!this.disposed) console.error(`Unable to load camera model: ${url}`, error)
+      }
+    )
   }
 
   setPose(pose) {
@@ -91,13 +139,12 @@ export class CameraScene {
   }
 
   applyPart(o, p) {
-    const t = easeInOut(clamp01((p - o.userData.delay) / 0.6))
+    if (!o.userData?.rest || !o.userData?.exploded) return
+    const t = easeInOut(clamp01((p - (o.userData.delay || 0)) / 0.6))
     o.position.lerpVectors(o.userData.rest, o.userData.exploded, t)
     if (o.userData.spin) {
       const s = o.userData.spin
       o.rotation[s.axis] = t * s.rate * 2
-    } else if (o.rotation) {
-      // gentle drift for suspended feel
     }
   }
 
@@ -120,7 +167,7 @@ export class CameraScene {
     const p = this.current.p
 
     // model: base pose + scroll spin + idle float + pointer parallax
-    this.model.rotation.y = -0.5 + this.current.spin + Math.sin(time * 0.4) * 0.05 + this.pointerCur.x * 0.16
+    this.model.rotation.y = -0.18 + this.current.spin + Math.sin(time * 0.4) * 0.05 + this.pointerCur.x * 0.16
     this.model.rotation.x = 0.08 + this.pointerCur.y * 0.1
     this.model.rotation.z = Math.sin(time * 0.3) * 0.012
     this.model.position.y = Math.sin(time * 0.6) * 0.06 - p * 0.2
