@@ -39,11 +39,12 @@ export function useReveal() {
   return ref
 }
 
-export function Reveal({ as: Tag = 'div', className = '', variant = '', delay = 0, children, ...rest }) {
+export function Reveal({ as: Tag = 'div', className = '', variant = '', delay = 0, children, style, ...rest }) {
   const ref = useReveal()
   const cls = `rv ${variant} ${className}`.trim()
+  const revealStyle = delay ? { ...style, transitionDelay: `${delay}ms` } : style
   return (
-    <Tag ref={ref} className={cls} style={delay ? { transitionDelay: `${delay}ms` } : undefined} {...rest}>
+    <Tag ref={ref} className={cls} style={revealStyle} {...rest}>
       {children}
     </Tag>
   )

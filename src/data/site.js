@@ -137,7 +137,6 @@ export const NAV = [
   { label: 'About', href: '/about/' },
   { label: 'Photography', href: '/photography/', menu: 'photography' },
   { label: 'Videography', href: '/videography/', menu: 'videography' },
-  { label: 'Locations', href: '/locations/' },
   { label: 'Blog', href: '/blog/' },
   { label: 'FAQ', href: '/faq/' },
   { label: 'Contact', href: '/contact/' },

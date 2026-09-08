@@ -996,6 +996,187 @@
   .vid__grid { grid-template-columns: 1fr; }
 }
 
+/* ---------------- service film marquee ---------------- */
+
+.service-films {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-top: clamp(4rem, 8vw, 7rem);
+  padding: clamp(3rem, 6vw, 5.5rem) 0;
+  background: linear-gradient(115deg, #1c7666 0%, #58bda7 52%, #b8e6d8 100%);
+  color: var(--paper-on-dark);
+  overflow: hidden;
+}
+
+.service-films .section-label { color: var(--ink-on-dark); }
+.service-films .section-label .tick { background: var(--teal-bright); }
+
+.service-films__title {
+  max-width: 14ch;
+  margin: 0 0 clamp(2rem, 4vw, 3.5rem);
+  font-size: var(--fs-h2);
+}
+
+.film-marquee {
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  min-height: clamp(300px, 42vw, 520px);
+  overflow: hidden;
+}
+
+.film-marquee__track {
+  display: flex;
+  width: max-content;
+  gap: clamp(1rem, 2vw, 1.8rem);
+  animation: film-marquee 42s linear infinite;
+  opacity: 0;
+  transition: opacity 0.6s var(--ease);
+}
+
+.film-marquee.is-ready .film-marquee__track {
+  opacity: 1;
+}
+
+.film-marquee__buffer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 0.85rem;
+  padding: 2rem;
+  color: var(--paper-on-dark);
+  transition: opacity 0.5s var(--ease), visibility 0.5s;
+}
+
+.film-marquee.is-ready .film-marquee__buffer {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.film-marquee__buffer-label,
+.film-marquee__buffer-meta {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.film-marquee__buffer-label { opacity: 0.7; }
+
+.film-marquee__buffer-meta {
+  display: flex;
+  gap: 1rem;
+  color: var(--ink-on-dark);
+}
+
+.film-marquee__buffer-meta b {
+  color: var(--paper-on-dark);
+  font-weight: 500;
+}
+
+.film-marquee__buffer-track {
+  width: min(300px, 70vw);
+  height: 1px;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.film-marquee__buffer-track span {
+  display: block;
+  height: 100%;
+  background: var(--paper-on-dark);
+  transition: width 0.3s var(--ease);
+}
+
+.film-marquee__item {
+  width: clamp(210px, 21vw, 300px);
+  flex: 0 0 auto;
+}
+
+.film-marquee__item .vcard { width: 100%; }
+
+@keyframes film-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(-50% - 0.9rem)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .film-marquee__track { animation-play-state: paused; }
+}
+
+/* ---------------- photography work marquee ---------------- */
+
+.work-marquee {
+  overflow: hidden;
+  padding: clamp(4.5rem, 9vw, 8rem) 0 clamp(4rem, 8vw, 7rem);
+  background: var(--paper);
+  border-block: 1px solid var(--line-soft);
+}
+
+.work-marquee .h2 {
+  max-width: 16ch;
+  margin: 0;
+}
+
+.work-marquee__rows {
+  display: grid;
+  gap: clamp(0.8rem, 1.4vw, 1.25rem);
+  margin-top: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.work-marquee__row {
+  overflow: hidden;
+}
+
+.work-marquee__track,
+.work-marquee__group {
+  display: flex;
+  width: max-content;
+  gap: clamp(0.8rem, 1.4vw, 1.25rem);
+}
+
+.work-marquee__track {
+  will-change: transform;
+}
+
+.work-marquee__group {
+  flex: 0 0 auto;
+}
+
+.work-marquee__item {
+  position: relative;
+  flex: 0 0 auto;
+  height: clamp(190px, 24vw, 360px);
+  margin: 0;
+  overflow: hidden;
+  background: var(--paper-3);
+}
+
+.work-marquee__item img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.9s var(--ease);
+}
+
+.work-marquee__item:hover img {
+  transform: scale(1.035);
+}
+
+@media (max-width: 640px) {
+  .work-marquee__item { height: 180px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .work-marquee__item img { transition: none; }
+}
+
 /* vcard */
 
 .vcard {
@@ -1011,6 +1192,16 @@
   height: 100%;
   border: 0;
   object-fit: cover;
+}
+
+.vcard--autoplay {
+  overflow: hidden;
+}
+
+.vcard--autoplay iframe {
+  left: -39%;
+  width: 178%;
+  max-width: none;
 }
 
 .vcard__facade {

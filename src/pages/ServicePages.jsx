@@ -1,11 +1,15 @@
+import { useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useSEO, breadcrumbSchema, serviceSchema, faqSchema } from '../lib/seo'
 import { Reveal } from '../lib/motion'
 import { SERVICES, PHOTOGRAPHY_SERVICES, VIDEOGRAPHY_SERVICES, serviceBySlug, typeOf, serviceHref } from '../data/services'
 import { LOCATIONS } from '../data/locations'
 import { SITE } from '../data/site'
+import { FILMS } from '../data/videos'
 import { PageHero, FAQSection } from '../components/ui'
 import CTASection from '../components/CTASection'
+import VideoCard from '../components/VideoCard'
+import WorkMarquee from '../components/WorkMarquee'
 import NotFound from './NotFound'
 
 /* ---------------- Hub pages ---------------- */
@@ -15,7 +19,7 @@ export function PhotographyHub() {
     <Hub
       kind="photography"
       title="Photography Services"
-      lede="Sixteen disciplines of product photography — from marketplace-ready white background masters to cinematic creative campaigns."
+      lede="Sixteen disciplines of product photography from marketplace-ready white background masters to cinematic creative campaigns."
       intro="Every category below is produced end-to-end in the Mumbai studio: briefed, styled, shot, edited and delivered in the exact formats your platforms require. Choose a discipline to see what's included, how it works and where we deliver it."
       services={PHOTOGRAPHY_SERVICES}
     />
@@ -34,7 +38,7 @@ export function VideographyHub() {
   )
 }
 
-function Hub({ kind, title, lede, intro, services }) {
+function Hub({ kind, title, lede, intro, services, image }) {
   useSEO({
     title: `${title} | ReCreative`,
     description: lede,
@@ -53,6 +57,7 @@ function Hub({ kind, title, lede, intro, services }) {
         lede={lede}
         crumbs={[{ label: 'Home', href: '/' }, { label: title }]}
         meta={`${services.length} services · Delivered from the Mumbai studio`}
+        image={image}
       />
       <section className="hub">
         <div className="wrap">
@@ -69,8 +74,10 @@ function Hub({ kind, title, lede, intro, services }) {
               </Reveal>
             ))}
           </div>
+          {kind === 'videography' && <VideographyShowcase />}
         </div>
       </section>
+      {kind === 'photography' && <WorkMarquee />}
       <FAQSection
         label="Common questions"
         title={`${title} — the essentials`}
@@ -91,6 +98,46 @@ function Hub({ kind, title, lede, intro, services }) {
       />
       <CTASection />
     </>
+  )
+}
+
+function VideographyShowcase() {
+  const films = [...FILMS, ...FILMS]
+  const loadedFilms = useRef(new Set())
+  const [loadedCount, setLoadedCount] = useState(0)
+  const isReady = loadedCount === films.length
+
+  const handleFilmLoad = (index) => {
+    if (loadedFilms.current.has(index)) return
+    loadedFilms.current.add(index)
+    setLoadedCount(loadedFilms.current.size)
+  }
+
+  return (
+    <section className="service-films" aria-labelledby="service-films-title">
+      <div className="wrap">
+        <Reveal as="p" className="section-label"><span className="tick" />Selected films</Reveal>
+        <Reveal as="h2" id="service-films-title" className="service-films__title">
+          Motion that makes products <em className="df">memorable.</em>
+        </Reveal>
+        <div className={`film-marquee ${isReady ? 'is-ready' : ''}`} aria-label="Selected videography films">
+          <div className="film-marquee__buffer" aria-live="polite" aria-hidden={isReady}>
+            <p className="film-marquee__buffer-label">Preparing the film reel</p>
+            <div className="film-marquee__buffer-track" role="progressbar" aria-valuenow={loadedCount} aria-valuemin="0" aria-valuemax={films.length}>
+              <span style={{ width: `${(loadedCount / films.length) * 100}%` }} />
+            </div>
+            <p className="film-marquee__buffer-meta">Loading selected films <b>{loadedCount}/{films.length}</b></p>
+          </div>
+          <div className="film-marquee__track">
+            {films.map((film, index) => (
+              <div className="film-marquee__item" key={`${film.id}-${index}`}>
+                <VideoCard film={film} ratio="4/5" autoplay onLoad={() => handleFilmLoad(index)} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
   )
 }
 
@@ -140,7 +187,7 @@ export function ServicePage({ kind }) {
       >
         <div className="pagehero__images" style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '1rem', marginTop: '2.6rem' }}>
           {svc.images.map((im) => (
-            <div key={im.src} className="ph vf rv-clip" style={{ aspectRatio: '4/3' }}>
+            <div key={im.src} className="ph vf" style={{ aspectRatio: '4/3' }}>
               <span className="vf-b" aria-hidden="true" />
               <img src={`/images/${im.src}.webp`} alt={im.alt} />
             </div>
