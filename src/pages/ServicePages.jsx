@@ -38,7 +38,7 @@ export function VideographyHub() {
   )
 }
 
-function Hub({ kind, title, lede, intro, services, image }) {
+function Hub({ kind, title, lede, intro, services }) {
   useSEO({
     title: `${title} | ReCreative`,
     description: lede,
@@ -57,7 +57,6 @@ function Hub({ kind, title, lede, intro, services, image }) {
         lede={lede}
         crumbs={[{ label: 'Home', href: '/' }, { label: title }]}
         meta={`${services.length} services · Delivered from the Mumbai studio`}
-        image={image}
       />
       <section className="hub">
         <div className="wrap">

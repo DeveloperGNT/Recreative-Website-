@@ -4,12 +4,13 @@ import { useSEO, breadcrumbSchema } from '../lib/seo'
 import { Reveal, prefersReducedMotion } from '../lib/motion'
 import { SITE, REVIEWS, PROCESS, CRAFT_CHAPTERS } from '../data/site'
 import { PHOTOGRAPHY_SERVICES, serviceHref } from '../data/services'
-import { LOCATIONS, locationHref } from '../data/locations'
+import { LOCATIONS, photographyLocationHref } from '../data/locations'
 import { FILMS } from '../data/videos'
 import { FAQS } from '../data/faqs'
 import CTASection from '../components/CTASection'
 import VideoCard from '../components/VideoCard'
 import { FAQSection } from '../components/ui'
+import ScrollSequence from '../three/ScrollSequence'
 
 const CameraCanvas = () =>
   import('../three/CameraCanvas').then((m) => m.default)
@@ -242,10 +243,10 @@ function VisualStatement() {
             <span className="vf-b" aria-hidden="true" />
             <img src="/images/work-21.webp" alt="Spray bottle staged on a dark tropical leaf — creative product photography" />
           </Reveal>
-          <figcaption className="ph-cap vis__cap">
+          {/* <figcaption className="ph-cap vis__cap">
             <span>Real productions</span>
             <span>Shot in the Mumbai studio</span>
-          </figcaption>
+          </figcaption> */}
         </div>
       </div>
     </section>
@@ -257,8 +258,7 @@ function VisualStatement() {
 function Craft() {
   const sectionRef = useRef(null)
   const stickyRef = useRef(null)
-  const poseRef = useRef({ p: 0, spin: 0, camZ: 12.2, camY: 0.7, lookY: 0.2 })
-  const [Canvas, setCanvas] = useState(null)
+  const progressRef = useRef(0)
   const reduced = prefersReducedMotion()
 
   const chaptersRef = useRef([])
@@ -276,44 +276,31 @@ function Craft() {
   }
 
   useEffect(() => {
-    let live = true
-    CameraCanvas().then((C) => live && setCanvas(() => C))
-    return () => {
-      live = false
-    }
-  }, [])
-
-  useEffect(() => {
-    if (reduced || !Canvas) return
-    let tl
+    if (reduced) return
+    let st
     let cancelled = false
     Promise.all([import('gsap'), import('gsap/ScrollTrigger')]).then(([{ gsap }, { ScrollTrigger }]) => {
       if (cancelled) return
       gsap.registerPlugin(ScrollTrigger)
-
-      tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top top',
-          end: 'bottom bottom',
-          scrub: 0.7,
-          onUpdate: (self) => updateChapters(self.progress),
+      // scroll position maps 1:1 onto the disassembly sequence (0 → frame 1,
+      // 1 → frame 300); reversing the scroll reverses the animation.
+      st = ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: 'top top',
+        end: 'bottom bottom',
+        onUpdate: (self) => {
+          progressRef.current = self.progress
+          updateChapters(self.progress)
         },
       })
-
-      tl.to(poseRef.current, { p: 0.5, spin: 1.2, camZ: 13.8, camY: 1.0, ease: 'power2.inOut', duration: 4 })
-        .to(poseRef.current, { p: 1, spin: 2.6, camZ: 15.4, camY: 1.6, ease: 'power1.inOut', duration: 3.2 })
-        .to(poseRef.current, { p: 1, spin: 3.4, camZ: 15.8, ease: 'none', duration: 1.4 })
-        .to(poseRef.current, { p: 0, spin: 6.283, camZ: 12.2, camY: 0.7, ease: 'power2.inOut', duration: 3.4 })
-
-      return () => {}
+      progressRef.current = st.progress
+      updateChapters(st.progress)
     })
     return () => {
       cancelled = true
-      tl?.scrollTrigger?.kill()
-      tl?.kill()
+      st?.kill()
     }
-  }, [Canvas, reduced])
+  }, [reduced])
 
   return (
     <section className="craft" ref={sectionRef} aria-label="The craft behind the camera">
@@ -337,7 +324,7 @@ function Craft() {
         <>
           <div className="craft__sticky" ref={stickyRef}>
             <div className="craft__canvas">
-              {Canvas && <Canvas poseRef={poseRef} />}
+              <ScrollSequence progressRef={progressRef} />
             </div>
             <div className="craft__head">
               <p className="section-label"><span className="tick" />The craft — scroll to disassemble</p>
@@ -589,7 +576,7 @@ function LocationsTeaser() {
           <div className="locs__primary">
             {LOCATIONS.filter((l) => l.primary).map((l, i) => (
               <Reveal as="div" key={l.slug} delay={i * 100}>
-                <Link to={locationHref(l)} className="loc__card">
+                <Link to={photographyLocationHref(l)} className="loc__card">
                   <p className="meta">{l.kind} · {l.region}</p>
                   <h3>{l.name}</h3>
                   <p>{l.blurb}</p>
@@ -604,7 +591,7 @@ function LocationsTeaser() {
             </p>
             <div className="locs__list chipgrid">
               {others.map((l) => (
-                <Link key={l.slug} to={locationHref(l)} className="chip">
+                <Link key={l.slug} to={photographyLocationHref(l)} className="chip">
                   {l.name}
                 </Link>
               ))}

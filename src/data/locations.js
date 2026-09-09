@@ -117,3 +117,4 @@ export const LOCATIONS = [
 
 export const locationBySlug = (slug) => LOCATIONS.find((l) => l.slug === slug)
 export const locationHref = (loc) => `/locations/${loc.slug}/`
+export const photographyLocationHref = (loc) => `/photography/commercial-product-photography/${loc.slug}/`

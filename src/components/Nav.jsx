@@ -24,7 +24,22 @@ export default function Nav() {
   const [openMenu, setOpenMenu] = useState(null) // 'photography' | 'videography' | null
   const [mobileOpen, setMobileOpen] = useState(false)
   const lastY = useRef(0)
+  const menuCloseTimer = useRef(null)
   const { pathname } = useLocation()
+
+  const cancelMenuClose = () => {
+    window.clearTimeout(menuCloseTimer.current)
+  }
+
+  const showMenu = (menu) => {
+    cancelMenuClose()
+    setOpenMenu(menu)
+  }
+
+  const scheduleMenuClose = () => {
+    cancelMenuClose()
+    menuCloseTimer.current = window.setTimeout(() => setOpenMenu(null), 300)
+  }
 
   useEffect(() => {
     const onScroll = () => {
@@ -47,6 +62,8 @@ export default function Nav() {
     return () => (document.body.style.overflow = '')
   }, [mobileOpen])
 
+  useEffect(() => () => cancelMenuClose(), [])
+
   return (
     <header className={`nav ${scrolled ? 'nav--scrolled' : ''} ${hidden && !mobileOpen ? 'nav--hidden' : ''}`}>
       <div className="nav__in">
@@ -57,8 +74,8 @@ export default function Nav() {
               <div
                 key={item.label}
                 className="nav__item"
-                onMouseEnter={() => setOpenMenu(item.menu)}
-                onMouseLeave={() => setOpenMenu(null)}
+                onMouseEnter={() => showMenu(item.menu)}
+                onMouseLeave={scheduleMenuClose}
               >
                 <NavLink
                   to={item.href}
@@ -69,7 +86,11 @@ export default function Nav() {
                   {item.label}
                   <svg viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg>
                 </NavLink>
-                <div className={`nav__panel ${openMenu === item.menu ? 'is-open' : ''}`}>
+                <div
+                  className={`nav__panel ${openMenu === item.menu ? 'is-open' : ''}`}
+                  onMouseEnter={cancelMenuClose}
+                  onMouseLeave={scheduleMenuClose}
+                >
                   <Panel menu={MENUS[item.menu]} />
                 </div>
               </div>

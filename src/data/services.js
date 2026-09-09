@@ -712,8 +712,8 @@ export const SERVICES = [
       },
     ],
     images: [
-      { src: 'vid-model-1', alt: 'Frame from a ReCreative model videoshoot' },
-      { src: 'vid-xout-1', alt: 'Vertical film frame from a model-led commercial' },
+      { src: 'img-k', alt: 'Frame from a ReCreative model videoshoot' },
+      { src: 'vid-harisons-2', alt: 'Vertical film frame from a model-led commercial' },
     ],
     related: ['product-videoshoot', 'fashion-photography', 'cosmetic-product-photography'],
   },

@@ -746,7 +746,38 @@
   inset: 0;
 }
 
-.craft__canvas canvas { width: 100% !important; height: 100% !important; }
+/* desktop: two-zone editorial composition — copy owns the left column, the
+   camera sequence owns the region beyond it, so exploded parts never pass
+   behind the typography */
+@media (min-width: 901px) {
+  .craft__canvas {
+    left: calc(var(--gutter) + 34rem + 3rem);
+  }
+}
+
+@media (min-width: 901px) and (max-width: 1180px) {
+  .craft__chapter { max-width: 24rem; }
+  .craft__canvas { left: calc(var(--gutter) + 24rem + 2rem); }
+}
+
+.craft__canvas canvas {
+  width: 100% !important;
+  height: 100% !important;
+  /* frame edges dissolve into the paper — the sequence feels printed into
+     the page rather than pasted on as a video rectangle */
+  -webkit-mask-image: radial-gradient(80% 74% at 50% 50%, #000 60%, transparent 98%);
+  mask-image: radial-gradient(80% 74% at 50% 50%, #000 60%, transparent 98%);
+}
+
+/* frame-sequence player: fades in once the first frames are decoded */
+.seq-canvas {
+  opacity: 0;
+  transition: opacity 0.7s var(--ease);
+}
+
+.seq-canvas.is-ready {
+  opacity: 1;
+}
 
 .craft__copy {
   position: absolute;
@@ -754,6 +785,7 @@
   display: flex;
   align-items: center;
   pointer-events: none;
+  z-index: 2;
 }
 
 .craft__chapters {
@@ -777,14 +809,28 @@
   transform: translateY(-50%);
 }
 
+/* copy sits on clean paper in its own column — no overlays, no shadows */
 .craft__chapter h3 {
   font-size: clamp(1.7rem, 3.2vw, 2.6rem);
   margin: 0.6rem 0 0.9rem;
+  color: #101915;
 }
 
 .craft__chapter p {
-  color: var(--ink-2);
+  color: #222e28;
   max-width: 42ch;
+}
+
+.craft__chapter .meta {
+  color: #46534b;
+}
+
+.craft__chapter em.df {
+  color: var(--teal-deep);
+}
+
+.craft__head .section-label {
+  color: #33403a;
 }
 
 .craft__progress {
@@ -835,9 +881,74 @@
 
 .craft__spacer { height: 520vh; }
 
+/* mobile: vertical editorial composition — label + reading zone on top,
+   camera fills the remaining viewport below, progress pinned at the bottom.
+   Flex flow (not absolute overlays) guarantees text and camera never overlap. */
 @media (max-width: 900px) {
-  .craft__chapter { max-width: 30rem; top: auto; bottom: 14%; transform: none; }
-  .craft__chapter.is-active { transform: none; }
+  .craft__sticky {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .craft__head {
+    padding-top: calc(var(--nav-h) + 0.9rem);
+  }
+
+  .craft__copy {
+    position: static;
+    display: block;
+    padding: 0.8rem var(--gutter) 0;
+    margin: 0;
+  }
+
+  /* stack chapters in one grid cell — zone height follows the tallest
+     chapter, so switching chapters never shifts the layout */
+  .craft__chapters {
+    display: grid;
+  }
+
+  .craft__chapter {
+    position: relative;
+    grid-area: 1 / 1;
+    top: auto;
+    left: auto;
+    transform: none;
+    max-width: none;
+  }
+
+  .craft__chapter.is-active {
+    transform: none;
+  }
+
+  .craft__chapter h3 {
+    font-size: clamp(1.95rem, 8.6vw, 2.5rem);
+    line-height: 1.08;
+    margin: 0.5rem 0 0.7rem;
+  }
+
+  .craft__chapter p {
+    font-size: 1rem;
+    line-height: 1.62;
+    max-width: 36ch;
+  }
+
+  /* camera: the hero of the section — fills all remaining space below the
+     copy (DOM has the canvas first; flex order puts it last) and stops
+     short of the progress line */
+  .craft__canvas {
+    position: relative;
+    inset: auto;
+    order: 3;
+    flex: 1 1 auto;
+    min-height: 0;
+    margin-top: 0.4rem;
+    padding-bottom: 3.4rem;
+  }
+
+  .craft__progress {
+    bottom: 1.1rem;
+  }
+
   .craft__spacer { height: 420vh; }
 }
 
@@ -1294,12 +1405,12 @@
 
 /* editorial rhythm */
 .work__g1 { grid-column: 1 / span 7; aspect-ratio: 16/11; }
-.work__g2 { grid-column: 8 / span 5; aspect-ratio: 4/5; margin-top: 10%; }
-.work__g3 { grid-column: 1 / span 4; aspect-ratio: 1/1.05; margin-top: -4%; }
-.work__g4 { grid-column: 5 / span 4; aspect-ratio: 1/1.18; margin-top: 6%; }
+.work__g2 { grid-column: 8 / span 5; aspect-ratio: 4/5; }
+.work__g3 { grid-column: 1 / span 4; aspect-ratio: 1/1.05; }
+.work__g4 { grid-column: 5 / span 4; aspect-ratio: 1/1.18; }
 .work__g5 { grid-column: 9 / span 4; aspect-ratio: 1/1.32; }
-.work__g6 { grid-column: 1 / span 5; aspect-ratio: 1/1.24; margin-top: 7%; }
-.work__g7 { grid-column: 6 / span 7; aspect-ratio: 16/11.4; margin-top: -5%; }
+.work__g6 { grid-column: 1 / span 5; aspect-ratio: 1/1.24; }
+.work__g7 { grid-column: 6 / span 7; aspect-ratio: 16/11.4; }
 
 @media (max-width: 800px) {
   .work__grid > * { grid-column: 1 / -1 !important; margin-top: 0 !important; }
