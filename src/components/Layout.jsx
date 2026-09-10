@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import Nav from './Nav'
 import Footer from './Footer'
+import LoadingBuffer from './LoadingBuffer'
 import { prefersReducedMotion } from '../lib/motion'
 
 function ScrollToTop() {
@@ -44,6 +45,7 @@ function Veil() {
 export default function Layout() {
   return (
     <>
+      <LoadingBuffer />
       <a href="#main" className="skip">Skip to content</a>
       <ScrollToTop />
       <Veil />

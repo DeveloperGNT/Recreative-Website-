@@ -45,25 +45,6 @@ export default function Home() {
   )
 }
 
-function ModelBuffer({ progress, ready }) {
-  return (
-    <div className={`model-buffer ${ready ? 'is-ready' : ''}`} aria-hidden={ready}>
-      <div className="model-buffer__inner">
-        <div className="model-buffer__mark">
-          <img src="/ReCreative-Logo-og.webp" alt="" width="72" height="72" />
-        </div>
-        <p className="model-buffer__eyebrow">ReCreative studio</p>
-        <h2>Preparing the view.</h2>
-        <p className="model-buffer__status">Loading the interactive camera experience</p>
-        <div className="model-buffer__track" role="progressbar" aria-valuenow={progress} aria-valuemin="0" aria-valuemax="100">
-          <span style={{ width: `${progress}%` }} />
-        </div>
-        <div className="model-buffer__meta"><span>Initialising 3D scene</span><b>{progress}%</b></div>
-      </div>
-    </div>
-  )
-}
-
 function faqHomeSchema() {
   return {
     '@context': 'https://schema.org',
@@ -94,7 +75,6 @@ function Hero() {
 
   return (
     <section className="hero">
-      <ModelBuffer progress={modelProgress} ready={modelReady} />
       <div className="hero__bg" aria-hidden="true" />
       <div className="hero__grid" aria-hidden="true" />
       <p className="hero__specs" aria-hidden="true">
