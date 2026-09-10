@@ -27,29 +27,31 @@ export class CameraScene {
     })
     this.renderer.setClearColor(0x000000, 0)
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping
-    this.renderer.toneMappingExposure = 1.12
+    this.renderer.toneMappingExposure = 1.0
 
     this.scene = new THREE.Scene()
 
-    // environment reflections
+    // environment reflections — kept dim so dark materials stay dark
     this.pmrem = new THREE.PMREMGenerator(this.renderer)
     this.envMap = this.pmrem.fromScene(new RoomEnvironment(), 0.04).texture
     this.scene.environment = this.envMap
+    this.scene.environmentIntensity = 0.5
 
-    // studio lighting
-    this.key = new THREE.DirectionalLight(0xfff4e6, 2.6)
+    // studio lighting — the env map carries the ambient; direct lights only
+    // add shape, so a black body renders black instead of washed-out grey
+    this.key = new THREE.DirectionalLight(0xfff4e6, 1.5)
     this.key.position.set(4, 6, 5)
     this.scene.add(this.key)
 
-    this.rim = new THREE.DirectionalLight(0x96dcc3, 1.7)
+    this.rim = new THREE.DirectionalLight(0x96dcc3, 1.1)
     this.rim.position.set(-6, 3, -6)
     this.scene.add(this.rim)
 
-    this.fill = new THREE.DirectionalLight(0xdfe8ff, 0.7)
+    this.fill = new THREE.DirectionalLight(0xdfe8ff, 0.3)
     this.fill.position.set(-3, -2, 6)
     this.scene.add(this.fill)
 
-    this.amb = new THREE.AmbientLight(0xffffff, 0.35)
+    this.amb = new THREE.AmbientLight(0xffffff, 0.1)
     this.scene.add(this.amb)
 
     // The hero can use an authored asset; the craft section keeps the
