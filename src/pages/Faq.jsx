@@ -12,7 +12,7 @@ export default function Faq() {
       <PageHero
         label="Frequently asked"
         title={<>The details, <em className="df">made clear.</em></>}
-        image={{ src: '/images/FAQ-hero.jpg', alt: 'Creative photography contact sheets on a studio table' }}
+        image={{ src: '/images/FAQ-hero.png', alt: 'Creative photography contact sheets on a studio table' }}
         crumbs={[{ label: 'Home', href: '/' }, { label: 'FAQ' }]}
       />
       <section className="section faq-page">

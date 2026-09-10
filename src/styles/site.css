@@ -1787,6 +1787,7 @@
 .pagehero__copy {
   display: grid;
   align-content: end;
+  align-self: center;
   gap: clamp(1.4rem, 3vw, 2.4rem);
 }
 
