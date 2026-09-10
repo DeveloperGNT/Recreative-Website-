@@ -22,6 +22,7 @@ export function PhotographyHub() {
       lede="Sixteen disciplines of product photography from marketplace-ready white background masters to cinematic creative campaigns."
       intro="Every category below is produced end-to-end in the Mumbai studio: briefed, styled, shot, edited and delivered in the exact formats your platforms require. Choose a discipline to see what's included, how it works and where we deliver it."
       services={PHOTOGRAPHY_SERVICES}
+      image={{ src: '/images/contact-hero.jpg', alt: 'Product photography studio setup with camera, lighting and a perfume product' }}
     />
   )
 }
@@ -34,11 +35,12 @@ export function VideographyHub() {
       lede="Product films, model shoots and 360° videos — directed in-studio and edited to hold attention."
       intro="Video is where products prove themselves: motion, scale, texture and use. ReCreative directs and produces commercial films end-to-end — planning, shooting, editing, grading and delivery — for marketplaces, social and campaigns."
       services={VIDEOGRAPHY_SERVICES}
+      image={{ src: '/images/shoot.jpg', alt: 'Cinematic studio setup — camera on tripod lit for a product film shoot' }}
     />
   )
 }
 
-function Hub({ kind, title, lede, intro, services }) {
+function Hub({ kind, title, lede, intro, services, image }) {
   useSEO({
     title: `${title} | ReCreative`,
     description: lede,
@@ -55,12 +57,13 @@ function Hub({ kind, title, lede, intro, services }) {
         label={`${kind} — services`}
         title={title}
         lede={lede}
+        intro={intro}
         crumbs={[{ label: 'Home', href: '/' }, { label: title }]}
         meta={`${services.length} services · Delivered from the Mumbai studio`}
+        image={image}
       />
       <section className="hub">
         <div className="wrap">
-          <Reveal as="p" className="prose" style={{ fontSize: '1.08rem' }}>{intro}</Reveal>
           <div className="hub__list">
             {services.map((s, i) => (
               <Reveal key={s.slug} delay={i * 30}>
@@ -101,7 +104,9 @@ function Hub({ kind, title, lede, intro, services }) {
 }
 
 function VideographyShowcase() {
-  const films = [...FILMS, ...FILMS]
+  // only vertical (9:16) films fill the Shorts-style reel without black bars
+  const verticals = FILMS.filter((f) => f.vertical)
+  const films = [...verticals, ...verticals]
   const loadedFilms = useRef(new Set())
   const [loadedCount, setLoadedCount] = useState(0)
   const isReady = loadedCount === films.length
@@ -130,7 +135,7 @@ function VideographyShowcase() {
           <div className="film-marquee__track">
             {films.map((film, index) => (
               <div className="film-marquee__item" key={`${film.id}-${index}`}>
-                <VideoCard film={film} ratio="4/5" autoplay onLoad={() => handleFilmLoad(index)} />
+                <VideoCard film={film} ratio="9/16" autoplay onLoad={() => handleFilmLoad(index)} />
               </div>
             ))}
           </div>

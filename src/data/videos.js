@@ -1,10 +1,12 @@
 // Real ReCreative films — YouTube IDs from the live site, with their real titles.
 // Posters are YouTube-provided thumbnails of the same videos.
+// vertical: video is 9:16 (fills the Shorts-style reel without letterboxing).
 
-const yt = (id, title, tag) => ({
+const yt = (id, title, tag, vertical = true) => ({
   id,
   title,
   tag,
+  vertical,
   poster: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
   href: `https://www.youtube.com/watch?v=${id}`,
 })
@@ -16,7 +18,7 @@ export const FILMS = [
   yt('FaJWHh-b06U', 'Speaker Commercial Shoot', 'Electronics'),
   yt('b7iZVwSCU0Q', 'Fanny Bag Commercial', 'Bags'),
   yt('jmi7BqJE0-A', 'Hair Dryer Commercial for HomeBasic', 'Electronics'),
-  yt('-gl4Se_5ojc', 'Mouse Glue Trap Ad', 'Product'),
+  yt('-gl4Se_5ojc', 'Mouse Glue Trap Ad', 'Product', false),
 ]
 
 // Stills from ReCreative's own film productions (used as cinematic imagery).

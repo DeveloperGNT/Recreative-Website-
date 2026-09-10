@@ -465,15 +465,15 @@ function VideographyIndex() {
 
 /* ------------------------------------------------ 08 · SELECTED WORK */
 
-const WORK_SLOTS = ['work-18', 'work-01', 'work-09', 'img-i', 'work-24', 'work-23', 'work-08']
+const WORK_SLOTS = ['img-f', 'work-01', 'work-03', 'work-17', 'work-09', 'work-05', 'work-08']
 const WORK_ALTS = {
-  'work-18': 'Jewellery photography — silver statement set on purple',
+  'img-f': 'Bags photography — brown leather handbag on white',
   'work-01': 'Bags photography — navy backpack on white',
-  'work-09': 'Creative fragrance shoot in deep red',
-  'img-i': 'Ecommerce flat lay with phone, earbuds and macarons',
-  'work-24': 'Footwear photography — black formal shoes',
-  'work-23': 'Food photography — golden ghee pour',
-  'work-08': 'Apparel photography — printed t-shirt',
+  'work-03': 'Cosmetics photography — red lipstick on white',
+  'work-17': 'Accessories photography — leather belt on white',
+  'work-09': 'Fragrance photography — red perfume bottle on white',
+  'work-05': 'Food photography — ghee jar on white',
+  'work-08': 'Apparel photography — printed t-shirt on white',
 }
 
 function SelectedWork() {

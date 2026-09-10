@@ -74,7 +74,7 @@ export function FaqSchema({ items }) {
 }
 
 // Shared inner-page hero with breadcrumbs
-export function PageHero({ label, title, lede, crumbs, children, meta, image }) {
+export function PageHero({ label, title, lede, intro, crumbs, children, meta, image }) {
   return (
     <section className="pagehero">
       <div className="wrap">
@@ -84,7 +84,10 @@ export function PageHero({ label, title, lede, crumbs, children, meta, image }) 
           {label}
         </p>
         <div className="pagehero__row">
-          <h1 className="pagehero__title">{title}</h1>
+          <div className={`pagehero__copy ${intro ? 'pagehero__copy--intro' : ''}`}>
+            <h1 className="pagehero__title">{title}</h1>
+            {intro && <p className="pagehero__intro">{intro}</p>}
+          </div>
           {image ? (
             <div className="pagehero__media">
               <img src={image.src} alt={image.alt} />

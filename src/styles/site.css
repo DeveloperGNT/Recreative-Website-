@@ -1204,7 +1204,7 @@
 }
 
 .film-marquee__item {
-  width: clamp(210px, 21vw, 300px);
+  width: clamp(190px, 18vw, 265px);
   flex: 0 0 auto;
 }
 
@@ -1309,10 +1309,11 @@
   overflow: hidden;
 }
 
-.vcard--autoplay iframe {
-  left: -39%;
-  width: 178%;
-  max-width: none;
+/* transparent blocker: prevents hover/pause so YouTube chrome never appears */
+.vcard__shield {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
 }
 
 .vcard__facade {
@@ -1390,11 +1391,11 @@
 
 .work__grid {
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
+  grid-template-columns: repeat(12, minmax(0, 1fr));
   gap: clamp(0.9rem, 1.8vw, 1.6rem);
 }
 
-.work__item { position: relative; }
+.work__item { position: relative; width: 100%; }
 
 .work__item a {
   display: block;
@@ -1783,6 +1784,23 @@
   font-size: var(--fs-display);
 }
 
+.pagehero__copy {
+  display: grid;
+  align-content: end;
+  gap: clamp(1.4rem, 3vw, 2.4rem);
+}
+
+.pagehero__copy--intro {
+  align-self: center;
+}
+
+.pagehero__intro {
+  max-width: 54ch;
+  color: var(--ink-2);
+  font-size: clamp(1rem, 1.35vw, 1.18rem);
+  line-height: 1.65;
+}
+
 .pagehero__lede {
   color: var(--ink-2);
   font-size: 1.08rem;
@@ -1810,6 +1828,7 @@
 
 @media (max-width: 860px) {
   .pagehero__row { grid-template-columns: 1fr; }
+  .pagehero__copy { gap: 1.5rem; }
 }
 
 /* hub index cards (photography/videography/locations) */
