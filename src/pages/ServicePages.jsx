@@ -33,7 +33,7 @@ export function VideographyHub() {
       kind="videography"
       title="Videography Services"
       lede="Product films, model shoots and 360° videos — directed in-studio and edited to hold attention."
-      intro="Video is where products prove themselves: motion, scale, texture and use. ReCreative directs and produces commercial films end-to-end — planning, shooting, editing, grading and delivery — for marketplaces, social and campaigns."
+      intro="Video is where products prove themselves: motion, scale, texture and use. ReCreative directs and produces commercial films end-to-end planning, shooting, editing, grading and delivery — for marketplaces, social and campaigns."
       services={VIDEOGRAPHY_SERVICES}
       image={{ src: '/images/shoot.jpg', alt: 'Cinematic studio setup — camera on tripod lit for a product film shoot' }}
     />
