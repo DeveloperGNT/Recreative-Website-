@@ -1606,28 +1606,6 @@
   gap: 1.3rem;
 }
 
-.cta__iris {
-  width: 74px;
-  color: var(--teal);
-  margin-bottom: 0.4rem;
-}
-
-.iris svg { width: 100%; height: auto; display: block; }
-
-.iris__blade {
-  fill: currentColor;
-  opacity: 0.9;
-  transition: transform 0.7s var(--ease);
-}
-
-.iris.is-open .iris__blade:nth-child(1) { transform: rotate(-38deg); }
-.iris.is-open .iris__blade:nth-child(2) { transform: rotate(-25deg); }
-.iris.is-open .iris__blade:nth-child(3) { transform: rotate(-12deg); }
-.iris.is-open .iris__blade:nth-child(4) { transform: rotate(0deg); }
-.iris.is-open .iris__blade:nth-child(5) { transform: rotate(12deg); }
-.iris.is-open .iris__blade:nth-child(6) { transform: rotate(25deg); }
-.iris.is-open .iris__blade:nth-child(7) { transform: rotate(38deg); }
-
 .cta__title {
   font-size: var(--fs-h2);
   max-width: 24ch;

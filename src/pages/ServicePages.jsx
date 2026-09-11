@@ -89,19 +89,17 @@ function ModelVideoPortfolio() {
 }
 
 function RealEstateVideoPortfolio() {
-  return <VideoPortfolio embeds={realEstateVideoEmbeds} label="Real estate videography portfolio" aspectRatio="16 / 9" />
+  return <VideoPortfolio embeds={realEstateVideoEmbeds} label="Real estate videography portfolio" />
 }
 
 function ProductVideoFrame({ src, index, label, aspectRatio }) {
   const frameRef = useRef(null)
-  const [isReady, setIsReady] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
     const frame = frameRef.current
     if (!frame) return undefined
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setIsReady(true)
       setIsVisible(true)
       return undefined
     }

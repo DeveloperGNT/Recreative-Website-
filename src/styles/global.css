@@ -676,3 +676,51 @@ figcaption.ph-cap {
 canvas {
   outline-offset: 4px;
 }
+
+/* ============================================================
+   Custom cursor — brand teal dot + trailing ring
+   ============================================================ */
+
+html.has-cursor,
+html.has-cursor * {
+  cursor: none !important;
+}
+
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 10000;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.cursor-dot {
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 50%;
+  background: #1b7766;
+  transition: opacity 0.25s var(--ease);
+}
+
+.cursor-ring {
+  width: 38px;
+  height: 38px;
+  margin: -19px 0 0 -19px;
+  border-radius: 50%;
+  border: 1.5px solid #1b7766;
+  /* blur whatever sits behind the lens (images, video, text) */
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  transition: opacity 0.25s var(--ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor-dot,
+  .cursor-ring {
+    display: none;
+  }
+}

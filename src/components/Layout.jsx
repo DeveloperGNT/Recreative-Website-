@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import Nav from './Nav'
 import Footer from './Footer'
 import LoadingBuffer from './LoadingBuffer'
+import CustomCursor from './CustomCursor'
 import { prefersReducedMotion } from '../lib/motion'
 
 function ScrollToTop() {
@@ -46,6 +47,7 @@ export default function Layout() {
   return (
     <>
       <LoadingBuffer />
+      <CustomCursor />
       <a href="#main" className="skip">Skip to content</a>
       <ScrollToTop />
       <Veil />

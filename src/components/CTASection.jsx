@@ -1,36 +1,5 @@
 import { Link } from 'react-router-dom'
 import { SITE } from '../data/site'
-import { useRef } from 'react'
-
-// Aperture iris SVG — opens on hover, closes on leave.
-function Iris() {
-  const ref = useRef(null)
-  const blades = 7
-  const onEnter = () => ref.current?.classList.add('is-open')
-  const onLeave = () => ref.current?.classList.remove('is-open')
-  return (
-    <div
-      className={`iris ${'is-open'}`}
-      ref={ref}
-      onMouseEnter={onEnter}
-      onMouseLeave={onLeave}
-      aria-hidden="true"
-    >
-      <svg viewBox="0 0 100 100">
-        {Array.from({ length: blades }).map((_, i) => (
-          <path
-            key={i}
-            className="iris__blade"
-            style={{ transitionDelay: `${i * 30}ms`, transformOrigin: '50px 50px' }}
-            d="M50 50 L50 2 A48 48 0 0 1 83.8 16.2 Z"
-            transform={`rotate(${(360 / blades) * i} 50 50)`}
-          />
-        ))}
-        <circle cx="50" cy="50" r="47" fill="none" stroke="currentColor" strokeWidth="1.5" />
-      </svg>
-    </div>
-  )
-}
 
 export default function CTASection({
   title = (
@@ -43,7 +12,6 @@ export default function CTASection({
   return (
     <section className="section cta">
       <div className="wrap cta__in">
-        <div className="cta__iris"><Iris /></div>
         <p className="section-label"><span className="tick" />Start a project</p>
         <h2 className="cta__title">{title}</h2>
         <p className="cta__body">{body}</p>
